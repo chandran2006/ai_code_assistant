@@ -15,7 +15,8 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       const allowed = [
-        process.env.FRONTEND_URL || 'http://localhost:5173',
+        process.env.FRONTEND_URL || 'https://ai-code-assistant-one.vercel.app',
+        'https://ai-code-assistant-one.vercel.app',
         'http://localhost:5173',
         'http://localhost:3000',
       ];
@@ -34,7 +35,7 @@ app.use(
 app.use(express.json({ limit: '200kb' }));
 app.use(express.urlencoded({ extended: true, limit: '200kb' }));
 
-// ─── Trust proxy (for Railway/Vercel) ────────────────────────
+// ─── Trust proxy (for Render/Vercel) ────────────────────────
 app.set('trust proxy', 1);
 
 // ─── Routes ──────────────────────────────────────────────────

@@ -4,6 +4,9 @@
 
 A full-stack AI-powered code analysis tool built with React, Node.js, Groq (Llama 3 70B), and MongoDB.
 
+🔗 **Live Demo:** https://ai-code-assistant-one.vercel.app
+⚙️ **API:** https://ai-code-assistant-zee5.onrender.com
+
 ---
 
 ## 📁 Project Structure
@@ -13,7 +16,7 @@ ai-code-assistant/
 ├── backend/
 │   ├── config/
 │   │   ├── db.js              # MongoDB connection
-│   │   └── groq.js            # Groq AI integration + prompt builder + response parser
+│   │   └── groq.js            # Groq AI integration
 │   ├── controllers/
 │   │   └── debugController.js # Business logic for /api/debug and /api/history
 │   ├── middleware/
@@ -22,10 +25,13 @@ ai-code-assistant/
 │   │   └── Query.js           # Mongoose schema for query history
 │   ├── routes/
 │   │   └── api.js             # Express routes with rate limiting
+│   ├── services/
+│   │   ├── aiService.js       # Prompt builder, parser, badge logic
+│   │   └── groqService.js     # Groq API client
 │   ├── server.js              # Express app entry point
 │   ├── package.json
 │   ├── .env.example
-│   └── railway.toml           # Railway deployment config
+│   └── render.yaml            # Render deployment config
 │
 └── frontend/
     ├── src/
@@ -41,7 +47,7 @@ ai-code-assistant/
     │   │   ├── useAnalyzer.js     # Core analysis state + API call
     │   │   └── useHistory.js      # History fetch hook
     │   ├── utils/
-    │   │   └── api.js             # Axios instance + API functions
+    │   │   └── api.js             # Axios instance + retry logic + API functions
     │   ├── styles/
     │   │   └── global.css         # CSS variables, dark theme, animations
     │   ├── App.jsx                # Root layout: split pane + sidebar
@@ -58,16 +64,16 @@ ai-code-assistant/
 
 ### Backend (`backend/.env`)
 ```env
-PORT=5000
+PORT=10000
 GROQ_API_KEY=your_groq_api_key_here
 MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/ai-code-assistant?retryWrites=true&w=majority
-NODE_ENV=development
-FRONTEND_URL=http://localhost:5173
+NODE_ENV=production
+FRONTEND_URL=https://ai-code-assistant-one.vercel.app
 ```
 
 ### Frontend (`frontend/.env`)
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=https://ai-code-assistant-zee5.onrender.com/api
 ```
 
 ---
@@ -83,17 +89,11 @@ VITE_API_URL=http://localhost:5000/api
 ### Step 1 — Clone & install
 
 ```bash
-# Clone the repo
 git clone https://github.com/yourname/ai-code-assistant.git
 cd ai-code-assistant
 
-# Install backend dependencies
-cd backend
-npm install
-
-# Install frontend dependencies
-cd ../frontend
-npm install
+cd backend && npm install
+cd ../frontend && npm install
 ```
 
 ### Step 2 — Configure environment
@@ -102,75 +102,58 @@ npm install
 # Backend
 cd backend
 cp .env.example .env
-# Edit .env and fill in GROQ_API_KEY and MONGO_URI
+# Fill in GROQ_API_KEY and MONGO_URI
 
-# Frontend
+# Frontend — for local dev, override the API URL
 cd ../frontend
-cp .env.example .env
-# VITE_API_URL=http://localhost:5000/api  (default — usually no change needed)
+echo "VITE_API_URL=http://localhost:5000/api" > .env
 ```
 
-### Step 3 — Get your API keys
-
-**Groq API Key:**
-1. Go to https://console.groq.com
-2. Sign up / log in
-3. Navigate to API Keys → Create New Key
-4. Copy the key into `backend/.env`
-
-**MongoDB URI:**
-1. Go to https://cloud.mongodb.com
-2. Create a free M0 cluster
-3. Create a database user
-4. Whitelist IP: `0.0.0.0/0` (for development)
-5. Click "Connect" → "Connect your application" → copy the URI
-6. Replace `<password>` in the URI and paste into `backend/.env`
-
-### Step 4 — Run locally
+### Step 3 — Run locally
 
 ```bash
 # Terminal 1 — Backend
-cd backend
-npm run dev
-# → Server running on http://localhost:5000
+cd backend && npm run dev
+# → http://localhost:5000
 
 # Terminal 2 — Frontend
-cd frontend
-npm run dev
-# → App running on http://localhost:5173
+cd frontend && npm run dev
+# → http://localhost:5173
 ```
-
-Open http://localhost:5173 in your browser. ✅
 
 ---
 
 ## ☁️ Deployment
 
-### Backend → Railway
+### Backend → Render
 
-1. Push your code to GitHub
-2. Go to https://railway.app → New Project → Deploy from GitHub
-3. Select the repo → set **Root Directory** to `backend`
-4. Add environment variables in Railway dashboard:
+1. Push code to GitHub
+2. Go to https://render.com → New → Web Service
+3. Connect repo → set **Root Directory** to `backend`
+4. Build command: `npm install` | Start command: `npm start`
+5. Add environment variables in Render dashboard:
    - `GROQ_API_KEY`
    - `MONGO_URI`
    - `NODE_ENV=production`
-   - `FRONTEND_URL=https://your-app.vercel.app`
-5. Railway auto-detects Node.js and deploys
-6. Copy your Railway URL: `https://your-app.up.railway.app`
+   - `FRONTEND_URL=https://ai-code-assistant-one.vercel.app`
+6. Deployed at: `https://ai-code-assistant-zee5.onrender.com`
+
+> ⚠️ Render free tier spins down after inactivity. The first request may take ~30s (cold start). Retry logic is built into the frontend to handle this automatically.
 
 ### Frontend → Vercel
 
 1. Go to https://vercel.com → New Project → Import from GitHub
-2. Select the repo → set **Root Directory** to `frontend`
+2. Set **Root Directory** to `frontend`
 3. Framework: **Vite**
 4. Add environment variable:
-   - `VITE_API_URL=https://your-app.up.railway.app/api`
-5. Click Deploy → done!
+   - `VITE_API_URL=https://ai-code-assistant-zee5.onrender.com/api`
+5. Deployed at: `https://ai-code-assistant-one.vercel.app`
 
 ---
 
 ## 📡 API Reference
+
+Base URL: `https://ai-code-assistant-zee5.onrender.com`
 
 ### `POST /api/debug`
 Analyze code and return structured results.
@@ -200,7 +183,7 @@ Analyze code and return structured results.
 }
 ```
 
-**Supported languages:** `javascript`, `python`, `java`, `typescript`, `cpp`, `go`, `rust`
+**Supported languages:** `javascript`, `python`, `java`, `typescript`, `c`, `cpp`, `go`, `rust`
 
 **Rate limit:** 20 requests per 15 minutes per IP
 
@@ -226,9 +209,10 @@ Health check endpoint.
 | 🧪 Test Cases | 2-3 ready-to-run test examples |
 | 📊 Quality Score | 0–100 with animated gauge visualization |
 | 📜 History | Last 20 queries saved and browsable |
-| 🌐 7 Languages | JS, Python, Java, TS, C++, Go, Rust |
+| 🌐 8 Languages | JS, Python, Java, TS, C, C++, Go, Rust |
 | 🎨 Monaco Editor | VS Code-quality editing experience |
 | 📋 Copy Buttons | One-click copy on all outputs |
+| 🔁 Retry Logic | Auto-retries on Render cold start |
 
 ---
 
@@ -242,5 +226,4 @@ Health check endpoint.
 | Database | MongoDB + Mongoose |
 | Validation | Joi |
 | Security | Helmet, CORS, express-rate-limit |
-| Deployment | Vercel (frontend), Railway (backend) |
-"# ai_code_assistant" 
+| Deployment | Vercel (frontend), Render (backend) |

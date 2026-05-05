@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://ai-code-assistant-zee5.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -10,7 +10,14 @@ const api = axios.create({
 
 api.interceptors.response.use(
   (res) => res,
-  (err) => {
+  async (err) => {
+    const config = err.config;
+    // Retry once on network error or 502/503 (Render cold start)
+    if (!config._retry && (!err.response || [502, 503].includes(err.response?.status))) {
+      config._retry = true;
+      await new Promise((r) => setTimeout(r, 3000));
+      return api(config);
+    }
     const message =
       err.response?.data?.error ||
       err.response?.data?.message ||

@@ -20,10 +20,11 @@ const MORE_TABS = [
   { id: 'complexityComparison',label: 'Compare Complexity',icon: '📋', color: '#34d399' },
   { id: 'realWorldImpact',     label: 'Real-World Impact', icon: '🌍', color: '#fb923c' },
   { id: 'roast',               label: 'Roast 🔥',          icon: '😈', color: '#f87171' },
+  { id: 'interviewMode',       label: 'Interview',         icon: '🎯', color: '#818cf8' },
   { id: 'badge',               label: 'Dev Badge',         icon: '🏅', color: 'var(--warning)' },
 ];
 
-const NO_COPY = ['compare', 'badge', 'score', 'complexity'];
+const NO_COPY = ['compare', 'badge', 'score', 'complexity', 'interviewMode'];
 
 // ── Utility panels ───────────────────────────────────────────
 const EmptyPanel = () => (
@@ -149,6 +150,26 @@ const ComplexityPanel = ({ timeComplexity, spaceComplexity }) => {
   );
 };
 
+const InterviewPanel = ({ content }) => {
+  if (!content || content.trim().toLowerCase() === 'interview mode is currently disabled.')
+    return (
+      <div style={misc.center}>
+        <div style={{ fontSize: '2rem' }}>🎯</div>
+        <p style={misc.title}>Interview Mode is off</p>
+        <p style={misc.sub}>Interview analysis will appear here after you analyze your code.</p>
+      </div>
+    );
+  return (
+    <div style={{ animation: 'fadeIn 0.25s ease' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, padding: '8px 12px', background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 8 }}>
+        <span style={{ fontSize: '1.1rem' }}>🎯</span>
+        <span style={{ fontSize: '0.8rem', color: '#818cf8', fontWeight: 600 }}>Interview Mode — explain your code like you're in a coding interview</span>
+      </div>
+      <MarkdownContent content={content} />
+    </div>
+  );
+};
+
 const RoastPanel = ({ roast }) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, padding: '24px 8px', animation: 'fadeIn 0.3s ease' }}>
     <div style={{ fontSize: '2.5rem' }}>🔥</div>
@@ -233,6 +254,7 @@ const OutputPanel = ({ result, loading, error, processingTime, originalCode }) =
       case 'compare':             return <CompareView originalCode={originalCode} fixedCode={result.fixedCode} />;
       case 'badge':               return <BadgePanel badge={result.badge} score={result.score} />;
       case 'roast':               return <RoastPanel roast={result.roast} />;
+      case 'interviewMode':       return <InterviewPanel content={result.interviewMode} />;
       case 'complexity':          return <ComplexityPanel timeComplexity={result.timeComplexity} spaceComplexity={result.spaceComplexity} />;
       case 'complexityComparison': return <div style={{ animation: 'fadeIn 0.2s ease' }}><MarkdownContent content={result.complexityComparison} /></div>;
       case 'realWorldImpact':     return <div style={{ animation: 'fadeIn 0.2s ease' }}><MarkdownContent content={result.realWorldImpact} /></div>;
