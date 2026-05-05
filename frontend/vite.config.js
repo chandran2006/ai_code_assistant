@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       },
@@ -15,5 +15,16 @@ export default defineConfig({
   },
   preview: {
     port: 5173,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor:  ['react', 'react-dom', 'react-router-dom'],
+          monaco:  ['@monaco-editor/react'],
+          three:   ['three', '@react-three/fiber', '@react-three/drei'],
+        },
+      },
+    },
   },
 });

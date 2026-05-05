@@ -2,7 +2,6 @@ services:
   - type: web
     name: ai-code-assistant-backend
     runtime: node
-    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health

@@ -4,7 +4,7 @@
 
 A full-stack AI-powered code analysis tool built with React, Node.js, Groq (Llama 3 70B), and MongoDB.
 
-🔗 **Live Demo:** https://ai-code-assistant-one.vercel.app
+🔗 **Live Demo:** https://codejudge-ai.netlify.app
 ⚙️ **API:** https://ai-code-assistant-zee5.onrender.com
 
 ---
@@ -54,7 +54,7 @@ ai-code-assistant/
     │   └── main.jsx               # React entry point
     ├── index.html
     ├── vite.config.js
-    ├── vercel.json                # Vercel deployment config
+    ├── netlify.toml               # Netlify deployment config
     └── package.json
 ```
 
@@ -68,7 +68,7 @@ PORT=10000
 GROQ_API_KEY=your_groq_api_key_here
 MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/ai-code-assistant?retryWrites=true&w=majority
 NODE_ENV=production
-FRONTEND_URL=https://ai-code-assistant-one.vercel.app
+FRONTEND_URL=https://codejudge-ai.netlify.app
 ```
 
 ### Frontend (`frontend/.env`)
@@ -135,19 +135,19 @@ cd frontend && npm run dev
    - `GROQ_API_KEY`
    - `MONGO_URI`
    - `NODE_ENV=production`
-   - `FRONTEND_URL=https://ai-code-assistant-one.vercel.app`
+   - `FRONTEND_URL=https://codejudge-ai.netlify.app`
 6. Deployed at: `https://ai-code-assistant-zee5.onrender.com`
 
 > ⚠️ Render free tier spins down after inactivity. The first request may take ~30s (cold start). Retry logic is built into the frontend to handle this automatically.
 
-### Frontend → Vercel
+### Frontend → Netlify
 
-1. Go to https://vercel.com → New Project → Import from GitHub
-2. Set **Root Directory** to `frontend`
-3. Framework: **Vite**
+1. Go to https://netlify.com → Add new site → Import from GitHub
+2. Set **Base directory** to `frontend`
+3. Build command: `npm run build` | Publish directory: `dist`
 4. Add environment variable:
    - `VITE_API_URL=https://ai-code-assistant-zee5.onrender.com/api`
-5. Deployed at: `https://ai-code-assistant-one.vercel.app`
+5. Deployed at: `https://codejudge-ai.netlify.app`
 
 ---
 
@@ -226,4 +226,4 @@ Health check endpoint.
 | Database | MongoDB + Mongoose |
 | Validation | Joi |
 | Security | Helmet, CORS, express-rate-limit |
-| Deployment | Vercel (frontend), Render (backend) |
+| Deployment | Netlify (frontend), Render (backend) |

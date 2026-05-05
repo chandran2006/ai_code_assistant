@@ -22,12 +22,12 @@ const querySchema = new mongoose.Schema(
       interviewMode:        String,
       roast:                String,
       badge:                String,
-      rawResponse:          String,
     },
     explainLike5:  { type: Boolean, default: false },
     roastMode:     { type: Boolean, default: false },
     interviewMode: { type: Boolean, default: false },
     processingTime: Number,
+    cacheKey:      { type: String, index: true },
     ipAddress:      String,
   },
   { timestamps: true, bufferCommands: false }

@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+const JUDGE0_URL = 'https://ce.judge0.com';
+
 // Judge0 CE language IDs
 const LANGUAGE_IDS = {
   c:          50,
@@ -12,8 +14,7 @@ const LANGUAGE_IDS = {
   rust:       73,
 };
 
-// Free public Judge0 CE — no API key required
-const JUDGE0_URL = 'https://ce.judge0.com';
+const TOKEN_RE = /^[a-zA-Z0-9_-]{10,64}$/;
 
 const runCode = async (req, res) => {
   const { code, language, stdin } = req.body;
@@ -30,14 +31,14 @@ const runCode = async (req, res) => {
     );
 
     const token = submitRes.data?.token;
-    if (!token) throw new Error('No token returned from Judge0');
+    if (!token || !TOKEN_RE.test(token)) throw new Error('Invalid token returned from Judge0');
 
     // Step 2 — Poll until done (max 15s)
     let result = null;
     for (let i = 0; i < 15; i++) {
       await new Promise(r => setTimeout(r, 1000));
       const pollRes = await axios.get(
-        `${JUDGE0_URL}/submissions/${token}?base64_encoded=false&fields=stdout,stderr,status,time,memory,compile_output`,
+        `${JUDGE0_URL}/submissions/${encodeURIComponent(token)}?base64_encoded=false&fields=stdout,stderr,status,time,memory,compile_output`,
         { timeout: 10000 }
       );
       result = pollRes.data;

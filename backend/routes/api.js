@@ -18,6 +18,14 @@ const apiLimiter = rateLimit({
   },
 });
 
+const historyLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: process.env.NODE_ENV === 'production' ? 30 : 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many requests. Slow down.' },
+});
+
 // Health check
 router.get('/health', (req, res) => {
   res.json({
@@ -34,7 +42,7 @@ router.post('/debug', apiLimiter, validateDebugInput, debugCode);
 router.post('/run', apiLimiter, validateRunInput, runCode);
 
 // History endpoints
-router.get('/history', getHistory);
-router.get('/history/:id', getHistoryById);
+router.get('/history',     historyLimiter, getHistory);
+router.get('/history/:id', historyLimiter, getHistoryById);
 
 module.exports = router;

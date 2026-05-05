@@ -14,7 +14,7 @@ const debugCode = async (req, res) => {
     const dbReady = mongoose.connection.readyState === 1;
     if (result.aiProvider !== 'cache' && dbReady) {
       try {
-        await Query.create({ language, code, result, explainLike5, roastMode, interviewMode, processingTime, ipAddress: req.ip });
+        await Query.create({ language, code, result, explainLike5, roastMode, interviewMode, processingTime, ipAddress: req.ip, cacheKey: result.cacheKey });
       } catch (dbErr) {
         console.warn('⚠️  Failed to save query to DB:', dbErr.message);
       }

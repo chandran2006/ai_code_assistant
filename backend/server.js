@@ -15,13 +15,13 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       const allowed = [
-        process.env.FRONTEND_URL || 'https://ai-code-assistant-one.vercel.app',
-        'https://ai-code-assistant-one.vercel.app',
+        process.env.FRONTEND_URL || 'https://codejudge-ai.netlify.app',
+        'https://codejudge-ai.netlify.app',
         'http://localhost:5173',
         'http://localhost:3000',
       ];
       if (process.env.NODE_ENV !== 'production') return callback(null, true);
-      if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+      if (allowed.includes(origin) || origin.endsWith('.netlify.app')) {
         return callback(null, true);
       }
       return callback(new Error('Not allowed by CORS'));

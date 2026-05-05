@@ -27,7 +27,7 @@ const runSchema = Joi.object({
     'any.only': `Language must be one of: ${LANGUAGES.join(', ')}.`,
     'any.required': 'Language is required.',
   }),
-  stdin: Joi.string().max(4000).allow('').default(''),
+  stdin: Joi.string().max(4000).allow('').default('').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g, ''),
 });
 
 const makeValidator = (schema) => (req, res, next) => {

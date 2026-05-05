@@ -1,5 +1,6 @@
 const { callGroq } = require('./groqService');
-const Query          = require('../models/Query');
+const Query        = require('../models/Query');
+const crypto       = require('crypto');
 
 // ── Shared constants ─────────────────────────────────────────
 const SUPPORTED_LANGUAGES = {
@@ -123,11 +124,12 @@ const assignBadge = (bugs, code, score, timeComplexity) => {
 };
 
 // ── Cache lookup ─────────────────────────────────────────────
-const getCached = async (code, language, explainLike5, roastMode, interviewMode) => {
+const hashKey = (code, language, explainLike5, roastMode, interviewMode) =>
+  crypto.createHash('sha256').update(`${language}|${explainLike5}|${roastMode}|${interviewMode}|${code}`).digest('hex');
+
+const getCached = async (cacheKey) => {
   try {
-    const cached = await Query.findOne({
-      code, language, explainLike5, roastMode, interviewMode,
-    })
+    const cached = await Query.findOne({ cacheKey })
       .sort({ createdAt: -1 })
       .select('result')
       .lean();
@@ -140,7 +142,8 @@ const getCached = async (code, language, explainLike5, roastMode, interviewMode)
 // ── Main entry point ─────────────────────────────────────────
 const analyzeCode = async (code, language, explainLike5 = false, roastMode = false, interviewMode = true) => {
   // 1. Cache check
-  const cached = await getCached(code, language, explainLike5, roastMode, interviewMode);
+  const cacheKey = hashKey(code, language, explainLike5, roastMode, interviewMode);
+  const cached = await getCached(cacheKey);
   if (cached) {
     console.log('✅ Cache hit — returning stored result.');
     return { ...cached, aiProvider: 'cache' };
@@ -158,10 +161,12 @@ const analyzeCode = async (code, language, explainLike5 = false, roastMode = fal
     throw groqErr;
   }
 
-  // 4. Parse + badge
-  const parsed    = parseResponse(raw);
-  parsed.badge    = assignBadge(parsed.bugs || '', code, parsed.score || 0, parsed.timeComplexity || '');
+  // Parse + badge
+  const parsed      = parseResponse(raw);
+  parsed.badge      = assignBadge(parsed.bugs || '', code, parsed.score || 0, parsed.timeComplexity || '');
   parsed.aiProvider = aiProvider;
+  parsed.cacheKey   = cacheKey;
+  delete parsed.rawResponse;
 
   return parsed;
 };

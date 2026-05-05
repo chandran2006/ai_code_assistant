@@ -1,14 +1,10 @@
 const Groq = require('groq-sdk');
 
-let _groq = null;
-const getGroq = () => {
-  if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY is missing.');
-  if (!_groq) _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-  return _groq;
-};
+if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY is missing.');
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 const callGroq = async (system, user) => {
-  const completion = await getGroq().chat.completions.create({
+  const completion = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [
       { role: 'system', content: system },
