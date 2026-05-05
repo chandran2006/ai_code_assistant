@@ -1,0 +1,145 @@
+:root {
+  /* Base palette */
+  --bg-primary: #0d0d0f;
+  --bg-secondary: #13131a;
+  --bg-panel: #16161e;
+  --bg-card: #1a1a24;
+  --bg-hover: #1f1f2e;
+
+  /* Borders */
+  --border: #252535;
+  --border-bright: #3a3a55;
+
+  /* Text */
+  --text-primary: #e8e8f0;
+  --text-secondary: #9090b0;
+  --text-muted: #5a5a7a;
+
+  /* Accent — electric cyan */
+  --accent: #00d4ff;
+  --accent-dim: rgba(0, 212, 255, 0.12);
+  --accent-glow: rgba(0, 212, 255, 0.35);
+
+  /* Semantic */
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --purple: #a78bfa;
+  --orange: #fb923c;
+
+  /* Score colors */
+  --score-low: #f87171;
+  --score-mid: #fbbf24;
+  --score-high: #4ade80;
+
+  /* Fonts */
+  --font-ui: 'Space Grotesk', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+
+  /* Sizing */
+  --header-h: 56px;
+  --sidebar-w: 280px;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { font-size: 15px; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Utility */
+.font-mono { font-family: var(--font-code); }
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes glitch {
+  0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+  10%       { clip-path: inset(10% 0 60% 0); transform: translate(-3px, 1px); }
+  20%       { clip-path: inset(50% 0 20% 0); transform: translate(3px, -1px); }
+  30%       { clip-path: inset(80% 0 5%  0); transform: translate(-2px, 2px); }
+  40%       { clip-path: inset(0 0 100% 0); transform: translate(0); }
+}
+
+@keyframes float-up {
+  0%   { opacity: 0; transform: translateY(20px); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-60px); }
+}
+
+@keyframes neon-pulse {
+  0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+  50%       { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; }
+}
+
+.animate-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Code block resets */
+pre, code {
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+/* Button reset */
+button {
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* Focus ring */
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Responsive helpers */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 0px; }
+}
